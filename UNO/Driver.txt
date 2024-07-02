@@ -1,0 +1,200 @@
+// https://www.loom.com/share/5906ca5657cb4df6a06633c6595b1354
+
+import java.util.ArrayList;
+
+//Rylan Casanova
+//This is my own work
+
+public class Driver {
+	public static void main(String[] args) {
+		Deck d = new Deck();
+		d.shuffle();
+		Player p1 = new Player("Player 1");
+		Player p2 = new Player("Player 2");
+		Player p3 = new Player("Player 3");
+		Player p4 = new Player("Player 4");
+
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		playerList.add(p1);
+		playerList.add(p2);
+		playerList.add(p3);
+		playerList.add(p4);
+
+		for (int i = 0; i < 7; i++) {
+			p1.takeCard(d.dealCard());
+			p2.takeCard(d.dealCard());
+			p3.takeCard(d.dealCard());
+			p4.takeCard(d.dealCard());
+		}
+
+		boolean winner = false;
+
+		Card startingCard = d.dealCard();
+		if (startingCard.getValue() == 14) {
+			// If the first card of the game is a Wild +4, the starting color will be yellow
+			startingCard.setColor('Y');
+		}
+		if (startingCard.getValue() == 13) {
+			// If the first card of the game is a Wild, the starting color will be green
+			startingCard.setColor('G');
+		}
+		DiscardPile discard = new DiscardPile(startingCard);
+
+		int currentPlayerIndex = 0;
+		int direction = 1;
+
+		while (!winner) {
+			Card topCard = discard.getTopCard();
+			System.out.println("Top Card: " + topCard);
+
+			if (currentPlayerIndex < 0) {
+				currentPlayerIndex = playerList.size() + currentPlayerIndex;
+			}
+			if (currentPlayerIndex > 3) {
+				currentPlayerIndex = currentPlayerIndex - playerList.size();
+			}
+
+			Player currentPlayer = playerList.get(currentPlayerIndex);
+			System.out.println(currentPlayer);
+
+			// values are 0 - 9 for number cards
+			// 10: skip
+			// 11: draw 2
+			// 12: reverse
+			// 13: wild
+			// 14: wild +4
+			if (currentPlayer.hasMatch(topCard)) {
+				Card playedCard = currentPlayer.playCard(topCard);
+				System.out.println(currentPlayer.getName() + " played a " + playedCard);
+				if (playedCard.getValue() == 14) {
+					// All Wild +4s are set to red
+					playedCard.setColor('R');
+					System.out.println(currentPlayer.getName() + " chose Red for their Wild color");
+					System.out.println("---------------------------------------------------------------");
+					// skips next player
+					currentPlayerIndex += direction;
+					if (currentPlayerIndex < 0) {
+						currentPlayerIndex = playerList.size() + currentPlayerIndex;
+					}
+					if (currentPlayerIndex > 3) {
+						currentPlayerIndex = currentPlayerIndex - playerList.size();
+					}
+					// adds 4 cards to next player
+					Player drawPlayer = playerList.get(currentPlayerIndex);
+					drawPlayer.takeCard(d.dealCard());
+					if (d.isEmpty()) {
+						ArrayList<Card> resetPile = discard.reset();
+						for (int i = 0; i < resetPile.size(); i++) {
+							d.addCard(resetPile.get(i));
+						}
+						d.shuffle();
+					}
+					drawPlayer.takeCard(d.dealCard());
+					if (d.isEmpty()) {
+						ArrayList<Card> resetPile = discard.reset();
+						for (int i = 0; i < resetPile.size(); i++) {
+							d.addCard(resetPile.get(i));
+						}
+						d.shuffle();
+					}
+					drawPlayer.takeCard(d.dealCard());
+					if (d.isEmpty()) {
+						ArrayList<Card> resetPile = discard.reset();
+						for (int i = 0; i < resetPile.size(); i++) {
+							d.addCard(resetPile.get(i));
+						}
+						d.shuffle();
+					}
+					drawPlayer.takeCard(d.dealCard());
+					System.out.println(drawPlayer.getName() + " drew 4 cards and skipped their turn");
+				}
+				if (playedCard.getValue() == 13) {
+					// All Wilds are set to blue
+					playedCard.setColor('B');
+					System.out.println(currentPlayer.getName() + " chose Blue for their Wild color");
+				}
+				if (playedCard.getValue() == 12) {
+					// Changes direction
+					direction = direction * -1;
+					System.out.println(currentPlayer.getName() + " reversed the order of play");
+				}
+				if (playedCard.getValue() == 11) {
+					// skips next player
+					currentPlayerIndex += direction;
+					if (currentPlayerIndex < 0) {
+						currentPlayerIndex = playerList.size() + currentPlayerIndex;
+					}
+					if (currentPlayerIndex > 3) {
+						currentPlayerIndex = currentPlayerIndex - playerList.size();
+					}
+					// adds 2 cards to next player
+					Player drawPlayer = playerList.get(currentPlayerIndex);
+					drawPlayer.takeCard(d.dealCard());
+					if (d.isEmpty()) {
+						ArrayList<Card> resetPile = discard.reset();
+						for (int i = 0; i < resetPile.size(); i++) {
+							d.addCard(resetPile.get(i));
+						}
+						d.shuffle();
+					}
+					drawPlayer.takeCard(d.dealCard());
+					System.out.println("---------------------------------------------------------------");
+					System.out.println(drawPlayer.getName() + " drew 2 cards and skipped their turn");
+				}
+				if (playedCard.getValue() == 10) {
+					currentPlayerIndex += direction;
+					if (currentPlayerIndex < 0) {
+						currentPlayerIndex = playerList.size() + currentPlayerIndex;
+					}
+					if (currentPlayerIndex > 3) {
+						currentPlayerIndex = currentPlayerIndex - playerList.size();
+					}
+					System.out.println("---------------------------------------------------------------");
+					System.out.println(playerList.get(currentPlayerIndex).getName() + " had their turn skipped");
+				}
+				discard.addCard(playedCard);
+				System.out.println("---------------------------------------------------------------");
+			} else {
+				// if player has no matches, player draws a card
+				Card takenCard = d.dealCard();
+				currentPlayer.takeCard(takenCard);
+				System.out.println(currentPlayer.getName() + " drew a " + takenCard);
+				System.out.println("---------------------------------------------------------------");
+			}
+
+			// checks if deck empty after turn
+			if (d.isEmpty()) {
+				ArrayList<Card> resetPile = discard.reset();
+				for (int i = 0; i < resetPile.size(); i++) {
+					d.addCard(resetPile.get(i));
+				}
+				d.shuffle();
+			}
+
+			// sets next player's turn
+			currentPlayerIndex += direction;
+
+			// checks for winner
+			for (int i = 0; i < playerList.size(); i++) {
+				if (playerList.get(i).isEmpty()) {
+					winner = true;
+				}
+			}
+		}
+
+		System.out.println("Game Over!");
+		System.out.println("---------------------------------------------------------------");
+		System.out.println(p1);
+		System.out.println(p2);
+		System.out.println(p3);
+		System.out.println(p4);
+		System.out.println("---------------------------------------------------------------");
+
+		for (int i = 0; i < playerList.size(); i++) {
+			if (playerList.get(i).isEmpty()) {
+				System.out.println(playerList.get(i).getName() + " wins!");
+			}
+		}
+
+	}
+}

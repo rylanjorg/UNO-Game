@@ -1,0 +1,35 @@
+//Rylan Casanova
+//This is my own work
+
+import java.util.ArrayList;
+
+public class DiscardPile {
+	private ArrayList<Card> discard;
+
+	public DiscardPile(Card c) {
+		discard = new ArrayList<Card>();
+		discard.add(c);
+		// discard pile is initialized with one card to start the game
+	}
+
+	public void addCard(Card c) {
+		discard.add(c);
+	}
+
+	public Card getTopCard() {
+		return discard.get(discard.size() - 1);
+	}
+
+	public ArrayList<Card> reset() {
+		// returns arraylist of all cards in the discard pile except for the top card
+		ArrayList<Card> stockpile = new ArrayList<Card>();
+		for (int i = 0; i < discard.size() - 1; i++) {
+			stockpile.add(discard.remove(i));
+		}
+		return stockpile;
+	}
+
+	public String toString() {
+		return "Card in play: " + this.getTopCard();
+	}
+}

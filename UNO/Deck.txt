@@ -1,0 +1,57 @@
+//Rylan Casanova
+//This is my own work
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Deck {
+	private ArrayList<Card> theDeck;
+
+	public Deck() {
+		theDeck = new ArrayList<Card>();
+
+		// add 4 wild and 4 wild +4 cards to theDeck
+		for (int i = 0; i < 4; i++) {
+			theDeck.add(new Card('?', 13));
+			theDeck.add(new Card('?', 14));
+		}
+
+		// add a 0 for each color to theDeck
+		theDeck.add(new Card('B', 0));
+		theDeck.add(new Card('G', 0));
+		theDeck.add(new Card('R', 0));
+		theDeck.add(new Card('Y', 0));
+
+		// add 1-12 twice for each color to theDeck
+		for (int i = 1; i < 13; i++) {
+			for (int j = 0; j < 2; j++) {
+				theDeck.add(new Card('B', i));
+				theDeck.add(new Card('G', i));
+				theDeck.add(new Card('R', i));
+				theDeck.add(new Card('Y', i));
+			}
+		}
+	}
+
+	public void shuffle() {
+		Collections.shuffle(theDeck);
+	}
+
+	public Card dealCard() {
+		Card c = theDeck.remove(theDeck.size() - 1);
+		return c;
+	}
+
+	public void addCard(Card c) {
+		theDeck.add(c);
+	}
+
+	public boolean isEmpty() {
+		return (theDeck.size() == 0);
+	}
+
+	public String toString() {
+		return "Deck [theDeck=" + theDeck + "]";
+	}
+
+}

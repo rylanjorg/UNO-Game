@@ -1,0 +1,54 @@
+//Rylan Casanova
+//This is my own work
+
+public class Card {
+	private char color;
+	private int value;
+	// values are 0 - 9 for number cards
+	// 10: skip
+	// 11: draw 2
+	// 12: reverse
+	// 13: wild
+	// 14: wild +4
+
+	public Card(char c, int v) {
+		color = c;
+		value = v;
+	}
+
+	public char getColor() {
+		return color;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setColor(char c) {
+		color = c;
+	}
+
+	public boolean isMatch(Card c) {
+		if (this.value == 13 || this.value == 14) {
+			return true;
+		} else if (this.color == c.color || this.value == c.value) {
+			return true;
+		}
+		return false;
+	}
+
+	public String toString() {
+		if (value == 10)
+			return "[" + color + "," + "SK" + "]";
+		if (value == 11)
+			return "[" + color + "," + "D2" + "]";
+		if (value == 12)
+			return "[" + color + "," + "RV" + "]";
+		if (value == 13)
+			return "[" + color + "," + "W" + "]";
+		if (value == 14)
+			return "[" + color + "," + "W4" + "]";
+		return "[" + color + "," + value + "]";
+	}
+
+}
